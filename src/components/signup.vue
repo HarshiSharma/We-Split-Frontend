@@ -1,3 +1,4 @@
+
 <template>
   <div id="container">
     <div class="signup-form jumbotron m-5">
@@ -28,7 +29,7 @@
           <div class="form-group">
             <label>Password</label>
             <input
-              type="text"
+              type="password"
               class="form-control"
               required="required"
               v-model="password"
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
   data() {
     return {

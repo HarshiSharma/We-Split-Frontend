@@ -1,45 +1,33 @@
 <template>
-  <div id="dashboard">
-    <!-- <h1>Welcome {{data.name}}!!</h1> -->
-    <!-- <p>You should only get here if you're authenticated!</p>
-    <p v-if="data">Your email address: {{ data.email }}</p>
-    <p v-if="!data">Please sign up</p>-->
+  <div id="expense">
     <div class="splitData">
-      <div class="expenseText text-center">
-        You are owed
-        <span class="text-success">{{owedAmount}}</span> and You owe
-        <span class="text-danger">{{oweAmount}}</span>
-      </div>
-      <div class="friends">
-        <!-- <b-list-group>
-          <b-list-group-item
-            class="friend-list d-flex justify-content-between align-items-center m-1"
-            v-for="friend in friends"
-            @click="email=friend.friend_email, showprofile()"
-          >
-            {{friend.friend_name}}
-            <p class="friendAmount">{{friend.money_total}}</p>
-          </b-list-group-item>
-        </b-list-group>-->
-        <ul class="list-group">
-          <li
-            class="list-group-item d-flex justify-content-between align-items-center"
-            v-for="friend in friends"
-            @click="email=friend.friend_email, showprofile()"
-          >
-            {{friend.friend_name}}
-            <span class="badge badge-danger">{{friend.money_total}}</span>
-          </li>
-        </ul>
+      <div class="amount text-center">
+        <div class="expenseText">
+          You have spent
+          <span class="text-danger">{{totalAmount}}</span> this month!
+        </div>
 
-        <router-link to="/newFriend">
-          <button type="button" class="btn draw-border">Add Friend</button>
-        </router-link>
+        <div class="expenses">
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Expense Name
+              <span class="badge badge-danger">Expense Amount</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Expense Name
+              <span class="badge badge-danger">Expense Amount</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Expense Name
+              <span class="badge badge-danger">Expense Amount</span>
+            </li>
+          </ul>
+        </div>
       </div>
+      <router-link to="/newExpense">
+        <button class="plus"></button>
+      </router-link>
     </div>
-    <router-link to="/split">
-      <button class="plus"></button>
-    </router-link>
   </div>
 </template>
 
@@ -49,9 +37,7 @@ import friendProfile from "./friendProfile";
 export default {
   data() {
     return {
-      email: "",
-      oweAmount: 500,
-      owedAmount: 200
+      totalAmount: 5000
     };
   },
   computed: {
@@ -87,19 +73,19 @@ h1,
 p {
   text-align: center;
 }
-.expenseText {
-  font-size: 45px;
-  letter-spacing: 5px;
-  color: whitesmoke;
-}
 
 li {
   color: whitesmoke;
   font-size: 20px;
   letter-spacing: 2px;
 }
+.expenseText {
+  font-size: 45px;
+  letter-spacing: 5px;
+  color: whitesmoke;
+}
 .amount,
-.friends {
+.expenses {
   margin: 5%;
 }
 .friendAmount {

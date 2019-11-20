@@ -14,12 +14,18 @@
 
             <div class="row">
               <div class="col-12">
-                <b-nav tabs>
-                  <b-nav-item @click="showDetails=true, showActivities=false">Details</b-nav-item>
-                  <b-nav-item @click="showDetails=false, showActivities=true">Activities</b-nav-item>
-                </b-nav>
+                <ol class="friendnav breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a @click="showDetails=true, showActivities=false">Details</a>
+                  </li>
+
+                  <li class="breadcrumb-item">
+                    <a @click="showDetails=false, showActivities=true">Activity</a>
+                  </li>
+                </ol>
+
                 <br />
-                <div class="tab-content ml-1">
+                <div class="friend-details tab-content ml-1">
                   <div v-if="showDetails">
                     <div class="row">
                       <div class="col-sm-4 col-md-3 col-6">
@@ -55,7 +61,10 @@
                     <h1>WTF</h1>
                   </div>
                 </div>
-                <b-button class="del mx-auto" variant="danger" @click="deleteFriend">Delete Friend</b-button>
+
+                <button type="button" class="btn btn-danger btn-lg btn-block" @click="deleteFriend">
+                  <span style="letter-spacing: 4px">Delete Friend</span>
+                </button>
               </div>
             </div>
           </div>
@@ -95,6 +104,9 @@ export default {
 </script>
 
 <style scoped>
+* {
+  color: whitesmoke;
+}
 body {
   padding-top: 68px;
   padding-bottom: 50px;
@@ -103,8 +115,15 @@ h1,
 label {
   font-weight: bold;
 }
-.del {
-  display: block;
-  width: 50%;
+.friendnav {
+  font-size: 20px;
+  background-color: none !important;
+  border: 0.5px solid rgb(77, 77, 77) !important;
+  background-image: none !important;
+  filter: none;
+}
+.friend-details {
+  font-size: 20px;
+  letter-spacing: 2px;
 }
 </style>

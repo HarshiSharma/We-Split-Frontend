@@ -4,11 +4,12 @@ import VueRouter from 'vue-router'
 //import WelcomePage from './components/welcome/welcome.vue'
 import DashboardPage from './components/dashboard.vue'
 import SignupPage from './components/signup.vue'
-import SigninPage from './components/signin.vue';
+import SigninPage from './components/signin.vue'
 import newFriend from './components/newFriend.vue'
 import friendProfile from './components/friendProfile.vue'
-
-
+import newExpense from './components/newExpense.vue'
+import expenses from './components/expenses.vue'
+import split from './components/newSplit.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -34,6 +35,18 @@ const routes = [
     {
         path: '/friendProfile',
         component: friendProfile
+    },
+    {
+        path: '/newExpense',
+        component: newExpense
+    },
+    {
+        path: '/expenses',
+        component: expenses
+    },
+    {
+        path: '/split',
+        component: split
     }
 
 ]

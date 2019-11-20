@@ -60,8 +60,6 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css?family=Acme&display=swap");
-
 .login {
   background-color: #f1f1f1 !important;
   padding: 2rem !important;
@@ -69,6 +67,5 @@ export default {
 .login h1 {
   color: black;
   text-align: center;
-  font-family: "Acme", sans-serif;
 }
 </style>

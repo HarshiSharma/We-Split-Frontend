@@ -1,17 +1,35 @@
 <template>
   <div>
-    <div class="newFriend align-content-center justify-content-center">
+    <div class="newFriend align-content-center justify-content-center m-5">
       <form @submit.prevent="onSubmit" class="form-horizontal">
-        <div class="wrap-input">
-          <label>E-Mail</label>
-          <input class="input" type="email" name="name" v-model="email" placeholder="email..." />
-          <button type="submit" class="mx-auto mt-5">Add Friend</button>
-          <div class="alerts">
-            <b-alert show variant="success" v-if="status==='Success'">Friend Added</b-alert>
-            <b-alert show variant="info" v-if="status==='Already Friend'">Already a friend</b-alert>
-            <b-alert show variant="danger" v-if="status==='Not A User'">Not a user</b-alert>
+        <fieldset>
+          <h1>Add Friend</h1>
+          <div class="form-group">
+            <label>E-Mail</label>
+            <input
+              type="email"
+              class="form-control"
+              required="required"
+              v-model="email"
+              placeholder="Enter Email"
+            />
           </div>
-        </div>
+          <button type="submit" class="btn draw-border">Add Friend</button>
+          <div class="alerts">
+            <div class="alert alert-dismissible alert-danger" v-if="status==='NotAUser'">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>Not a user</strong>
+            </div>
+            <div class="alert alert-dismissible alert-success" v-if="status==='Success'">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>Friend Added</strong>
+            </div>
+            <div class="alert alert-dismissible alert-warning" v-if="status==='AlreadyFriend'">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>Already a friend</strong>
+            </div>
+          </div>
+        </fieldset>
       </form>
     </div>
   </div>
@@ -49,57 +67,16 @@ export default {
   margin: 2%;
 }
 .newFriend {
-  margin: 15%;
-  padding: 5%;
-  border: 0.5px solid #e2e2e2;
-  box-shadow: 5px 5px 2px -2px #a5a5a5;
+  padding: 2rem !important;
 }
-.wrap_input {
-  width: 100%;
-  border-bottom: 2px solid #dbdbdb;
-  margin-bottom: 45px;
-}
-label {
-  font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  color: #999999;
-  line-height: 1.2;
-  padding-left: 2px;
-}
-.input {
-  display: block;
-  height: 50px;
-  width: 100%;
-  background: transparent;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  color: #727171;
-  line-height: 1.2;
-  padding: 0 2px;
-  border-top: none;
-  border-right: none;
-  border-left: none;
+.newFriend h1 {
+  color: rgb(255, 255, 255);
+  text-align: center;
+  font-family: "Acme", sans-serif;
 }
 button {
-  display: block;
-  background: linear-gradient(
-    to top,
-    #1c3eb4,
-    #154cbd,
-    #1059c6,
-    #1266ce,
-    #1b73d5
-  );
-
-  border-radius: 11px;
-  height: 54px;
-  line-height: 52px;
-  width: 220px;
-  padding-left: 8px;
-  /* float: left; */
-  color: #fff;
-  -webkit-box-shadow: 5px 5px 2px -2px #a5a5a5;
-  box-shadow: 5px 5px 2px -2px #a5a5a5;
+  color: #ffffff !important;
+  font-weight: 900;
+  letter-spacing: 4px;
 }
 </style>

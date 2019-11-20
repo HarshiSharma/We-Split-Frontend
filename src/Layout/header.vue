@@ -1,37 +1,35 @@
 <template>
-  <div class="header">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">We Split</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarColor01"
-        aria-controls="navbarColor01"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="#">We Split</a>
+    <button
+      class="navbar-toggler collapsed"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarColor01"
+      aria-controls="navbarColor01"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item" v-if="!auth">
-            <router-link class="nav-link" to="/signup">Sign Up</router-link>
-          </li>
-          <li class="nav-item active" v-if="!auth">
-            <router-link class="nav-link" to="/signin">Sign In</router-link>
-          </li>
-          <li v-if="auth">
-            <router-link class="nav-link" to="/dashboard">Dashboard</router-link>
-          </li>
-          <li v-if="auth">
-            <a class="logout nav-link" @click="onLogout">Logout</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </div>
+    <div class="nav navbar-nav navbar-right" id="navbarColor01">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item ac" v-if="!auth">
+          <router-link class="nav-link" to="/signup">Sign Up</router-link>
+        </li>
+        <li class="nav-item active" v-if="!auth">
+          <router-link class="nav-link" to="/signin">Sign In</router-link>
+        </li>
+        <li v-if="auth">
+          <router-link class="nav-link" to="/dashboard">Dashboard</router-link>
+        </li>
+        <li v-if="auth">
+          <a class="logout nav-link" @click="onLogout">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </template>
 <script>
 export default {

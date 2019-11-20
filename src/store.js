@@ -11,7 +11,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         idToken: null,
-        // userId: null,
+        userEmail: null,
         user: [],
         friendStatus: "",
         friends: [],
@@ -108,6 +108,7 @@ export default new Vuex.Store({
                     localStorage.setItem('token', res.data.token)
                         //localStorage.setItem('userId', res.data.localId)
                     localStorage.setItem('expirationDate', expirationDate)
+
                     router.replace('/dashboard')
                     dispatch('setLogoutTimer', now)
 
