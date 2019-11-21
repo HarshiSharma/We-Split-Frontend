@@ -5,7 +5,7 @@ import Vuex from 'vuex'
 import axios from './axios.auth'
 import globalAxios from 'axios'
 import router from './router'
-
+import $bus from './EventBus'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -108,6 +108,7 @@ export default new Vuex.Store({
                     localStorage.setItem('token', res.data.token)
                         //localStorage.setItem('userId', res.data.localId)
                     localStorage.setItem('expirationDate', expirationDate)
+                    $bus.$emit('logged', 'User logged')
 
                     router.replace('/dashboard')
                     dispatch('setLogoutTimer', now)

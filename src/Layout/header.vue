@@ -15,16 +15,16 @@
 
     <div class="nav navbar-nav navbar-right" id="navbarColor01">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item ac" v-if="!auth">
+        <li class="nav-item ac" v-if="!isLogged">
           <router-link class="nav-link" to="/signup">Sign Up</router-link>
         </li>
-        <li class="nav-item active" v-if="!auth">
+        <li class="nav-item active" v-if="!isLogged">
           <router-link class="nav-link" to="/signin">Sign In</router-link>
         </li>
-        <li v-if="auth">
+        <li v-if="isLogged">
           <router-link class="nav-link" to="/dashboard">Dashboard</router-link>
         </li>
-        <li v-if="auth">
+        <li v-if="isLogged">
           <a class="logout nav-link" @click="onLogout">Logout</a>
         </li>
       </ul>
@@ -33,14 +33,23 @@
 </template>
 <script>
 export default {
-  computed: {
-    auth() {
-      return this.$store.getters.isAuthenticated;
-    }
+  data() {
+    return {
+      isLogged: this.checkIfIsLogged()
+    };
+  },
+  created() {
+    this.$bus.$on("logged", () => {
+      this.isLogged = this.checkIfIsLogged();
+    });
   },
   methods: {
     onLogout() {
       this.$store.dispatch("logout");
+    },
+    checkIfIsLogged() {
+      if (!this.$store.getters.isAuthenticated) return false;
+      else return true;
     }
   }
 };

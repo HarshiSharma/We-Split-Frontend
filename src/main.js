@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import EventBus from './EventBus'
 import Vue from 'vue'
 import App from './App.vue'
 import axios from 'axios'
@@ -10,6 +11,8 @@ import 'bootswatch/dist/slate/bootstrap.min.css';
 //import 'roboto-fontface/css/roboto/roboto-fontface.css'
 
 axios.defaults.baseURL = "http://localhost:8080";
+Vue.prototype.$bus = EventBus
+
 //axios.defaults.headers.common['Authorization'] = "fasdfasfas"; //good to pass token ??
 //axios.defaults.headers.get['Accepts'] = "application/json";
 
