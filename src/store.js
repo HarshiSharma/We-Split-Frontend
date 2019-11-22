@@ -13,9 +13,11 @@ export default new Vuex.Store({
         idToken: null,
         splitStatus: null,
         friendStatus: "",
+        expenseStatus: null,
         user: [],
         friends: [],
-        friendData: []
+        friendData: [],
+        Expenses: []
     },
     mutations: {
         authUser(state, userData) {
@@ -25,19 +27,15 @@ export default new Vuex.Store({
         },
         storeUserEmail(state, userData) {
             state.userEmail = userData
-
         },
         storeUser(state, userData) {
-
             state.user.push(userData)
-
         },
         clearAuthData(state) {
             state.idToken = null,
                 state.user = [],
                 state.friendStatus = "",
                 state.friends = []
-
         },
         clearFriendData(state) {
             state.friendData = []
@@ -61,6 +59,23 @@ export default new Vuex.Store({
                 )
                 .catch(err => console.log("created error", err));
         },
+        addPersonalExpense({ commit, dispatch }, authData) {
+            console.log(authData)
+            const data = authData
+            const AuthStr_token = 'Bearer '.concat(localStorage.getItem('token'));
+            const AuthStr = { headers: { Authorization: AuthStr_token } }
+            console.log(data)
+            console.log(AuthStr)
+            axios.post('/addpersonalexpense', data, AuthStr)
+                .then(
+                    res => {
+                        console.log(res.data);
+                        this.state.expenseStatus = res.status;
+                    }
+                )
+                .catch(err => console.log("created error", err));
+        },
+
         deleteFriend({ state, dispatch }, authData) {
             console.log(authData)
             const data = { "friend_email": authData }
@@ -97,8 +112,6 @@ export default new Vuex.Store({
                 })
                 .catch(err => console.log("created error", err));
         },
-
-
         fetchFriends({ commit, state }) {
             if (!this.state.idToken) {
                 return
@@ -233,7 +246,6 @@ export default new Vuex.Store({
                     res => {
                         console.log(res.status);
                         this.state.splitStatus = res.status;
-
                     }
                 )
                 .catch(err => console.log("created error", err));
@@ -250,13 +262,25 @@ export default new Vuex.Store({
                     token: token,
                     //userId: userId
                 })
-
             }
-
         },
-
-
-
+        viewExpenses({ commit, state }) {
+            if (!this.state.idToken) {
+                return
+            }
+            const AuthStr_token = 'Bearer '.concat(localStorage.getItem('token'));
+            const AuthStr = {
+                headers: {
+                    Authorization: AuthStr_token,
+                }
+            }
+            axios.get('/viewallpersonalexpense', AuthStr)
+                .then(res => {
+                    console.log(res.data)
+                    state.Expenses.push(res.data)
+                })
+                .catch(err => console.log("created error", err));
+        }
     },
     getters: {
         userInfo(state) {
@@ -272,6 +296,9 @@ export default new Vuex.Store({
         friendStat(state) {
             return state.friendStatus
         },
+        expenseStatus(state) {
+            return state.expenseStatus
+        },
         friends(state) {
             return state.friends[0]
         },
@@ -281,6 +308,10 @@ export default new Vuex.Store({
         },
         splitStatus(state) {
             return state.splitStatus;
+        },
+        expenseData(state) {
+            console.log(state.Expenses)
+            return state.Expenses
         }
     }
 })

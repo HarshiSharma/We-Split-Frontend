@@ -1,6 +1,12 @@
 <template>
   <div>
     <div class="newExpense align-content-center justify-content-center m-5">
+      <div class="alerts">
+        <div class="alert alert-dismissible alert-success" v-if="status==200">
+          <button type="button" class="close" data-dismiss="alert" @click="status=0">&times;</button>
+          <strong>Expense Added</strong>
+        </div>
+      </div>
       <form @submit.prevent="onSubmit" class="form-horizontal">
         <fieldset>
           <h1>Add Expense</h1>
@@ -43,24 +49,34 @@ export default {
   data() {
     return {
       name: "",
-      categories: ["Food", "Grocery", "Laundry"],
+      categories: ["Food", "Grocery", "Laundry", "Others"],
       category: "",
       amount: null,
       createdOn: Date.now()
     };
   },
   computed: {
-    status() {}
+    status() {
+      console.log(this.$store.getters.expenseStatus);
+      return this.$store.getters.expenseStatus;
+    },
+    userEmail() {
+      //console.log(this.$store.getters.user);
+      if (!this.$store.getters.userEmail) {
+        return false;
+      }
+      return this.$store.getters.userEmail;
+    }
   },
   methods: {
     onSubmit() {
       const expenseData = {
-        name: this.name,
+        userid: this.userEmail,
+        description: this.name,
         category: this.category,
-        amount: this.amount,
-        createdOn: this.createdOn
+        pex_amount: this.amount
       };
-      console.log(expenseData);
+      this.$store.dispatch("addPersonalExpense", expenseData);
     }
   }
 };

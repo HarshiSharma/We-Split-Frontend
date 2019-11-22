@@ -41,24 +41,17 @@ export default {
     };
   },
   computed: {
-    data() {
-      //console.log(this.$store.getters.user);
-      if (!this.$store.getters.user) {
+    expenses() {
+      console.log(this.$store.getters.expenseData);
+      if (!this.$store.getters.expenseData) {
         return false;
       }
-      return this.$store.getters.user;
-    },
-    friends() {
-      console.log(this.$store.getters.friends);
-      if (!this.$store.getters.friends) {
-        return false;
-      }
-      return this.$store.getters.friends;
+      return this.$store.getters.expenseData;
     }
   },
   created() {
     this.$store.dispatch("fetchUser");
-    this.$store.dispatch("fetchFriends");
+    this.$store.dispatch("viewExpenses");
   },
   methods: {
     showprofile() {
