@@ -1,26 +1,12 @@
 <template>
   <div id="dashboard" @load="fetchUser()">
-    <!-- <h1>Welcome {{data.name}}!!</h1> -->
-    <!-- <p>You should only get here if you're authenticated!</p>
-    <p v-if="data">Your email address: {{ data.email }}</p>
-    <p v-if="!data">Please sign up</p>-->
     <div class="splitData">
       <div class="expenseText text-center">
         You are owed
-        <span class="text-success">{{owedAmount}}</span> and You owe
-        <span class="text-danger">{{oweAmount}}</span>
+        <span class="text-success">{{userData.lentAmount}}</span> and You owe
+        <span class="text-danger">{{userData.oweAmount}}</span>
       </div>
       <div class="friends">
-        <!-- <b-list-group>
-          <b-list-group-item
-            class="friend-list d-flex justify-content-between align-items-center m-1"
-            v-for="friend in friends"
-            @click="email=friend.friend_email, showprofile()"
-          >
-            {{friend.friend_name}}
-            <p class="friendAmount">{{friend.money_total}}</p>
-          </b-list-group-item>
-        </b-list-group>-->
         <ul class="list-group">
           <li
             class="list-group-item d-flex justify-content-between align-items-center"
@@ -50,11 +36,19 @@ export default {
   data() {
     return {
       email: "",
+
       oweAmount: 500,
       owedAmount: 200
     };
   },
   computed: {
+    userData() {
+      console.log(this.$store.getters.userInfo);
+      if (!this.$store.getters.userInfo) {
+        return false;
+      }
+      return this.$store.getters.userInfo;
+    },
     userEmail() {
       //console.log(this.$store.getters.user);
       if (!this.$store.getters.userEmail) {

@@ -1,11 +1,4 @@
 <template>
-  <!-- <b-nav v-if="auth" tabs fill>
-    <b-nav-item href="/dashboard">Friend</b-nav-item>
-
-    <b-nav-item>Group</b-nav-item>
-    <b-nav-item>Activity</b-nav-item>
-    <b-nav-item>Expense</b-nav-item>
-  </b-nav>-->
   <ol v-if="isLogged" class="breadcrumb">
     <li class="breadcrumb-item active">
       <a href="/dashboard">Friend</a>
@@ -26,7 +19,7 @@ export default {
       isLogged: this.checkIfIsLogged()
     };
   },
-  updated() {
+  created() {
     this.$bus.$on("logged", () => {
       this.isLogged = this.checkIfIsLogged();
     });

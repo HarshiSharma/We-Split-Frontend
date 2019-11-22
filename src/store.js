@@ -13,6 +13,7 @@ export default new Vuex.Store({
         idToken: null,
         splitStatus: null,
         friendStatus: "",
+        user: [],
         friends: [],
         friendData: []
     },
@@ -22,8 +23,13 @@ export default new Vuex.Store({
             state.userEmail = userData.email;
             // state.userId = userData.userId;
         },
-        storeUserEmail(state, user) {
-            state.userEmail = user
+        storeUserEmail(state, userData) {
+            state.userEmail = userData
+
+        },
+        storeUser(state, userData) {
+
+            state.user.push(userData)
 
         },
         clearAuthData(state) {
@@ -83,9 +89,10 @@ export default new Vuex.Store({
             axios.get('/user', AuthStr)
                 .then(res => {
                     //console.log("created: response", res);
-                    //const data = res.data;
+                    const data = res.data;
                     // const users_token = data.token;
                     // console.log("created: users", users_token);
+                    commit('storeUser', data)
 
                 })
                 .catch(err => console.log("created error", err));
@@ -175,8 +182,9 @@ export default new Vuex.Store({
             localStorage.removeItem('expirationDate')
             localStorage.removeItem('token')
             localStorage.removeItem('userEmail')
+
+            $bus.$emit('logged', 'User logged')
             router.replace('/signin')
-            $bus.$emit(' ', 'User logged off')
         },
 
         setLogoutTimer({ commit }, expirationTime) {
@@ -251,6 +259,9 @@ export default new Vuex.Store({
 
     },
     getters: {
+        userInfo(state) {
+            return state.user[0]
+        },
         userEmail(state) {
             return localStorage.getItem('userEmail')
         },
