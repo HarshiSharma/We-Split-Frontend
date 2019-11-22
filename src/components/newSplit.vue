@@ -1,6 +1,23 @@
 <template>
   <div @load="wtf()">
     <div class="newExpense align-content-center justify-content-center m-5 m-sm-2">
+      <div class="alerts">
+        <div class="alert alert-dismissible alert-success" v-if="status==200">
+          <button type="button" class="close" data-dismiss="alert" @click="status=0">&times;</button>
+          <strong>Expense Added</strong>
+        </div>
+        <div
+          class="alert alert-dismissible alert-danger"
+          v-if="status==400||status==401||status==500||status==501"
+        >
+          <button type="button" class="close" data-dismiss="alert" @click="status=0">&times;</button>
+          <strong>Failed</strong>
+        </div>
+        <div class="alert alert-dismissible alert-danger" v-if="unequal_error">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <strong>Wrong Split Distribution</strong>
+        </div>
+      </div>
       <form v-on:submit.prevent="onSubmit,onUnequalSubmit" class="form-horizontal">
         <fieldset>
           <h1>Add Split</h1>
@@ -54,19 +71,6 @@
             class="btn draw-border"
             v-if="!splitUnequally"
           >Split Unequally</button>
-          <div class="alerts">
-            <div class="alert alert-dismissible alert-success" v-if="status==200">
-              <button type="button" class="close" data-dismiss="alert" @click="status=0">&times;</button>
-              <strong>Expense Added</strong>
-            </div>
-            <div
-              class="alert alert-dismissible alert-danger"
-              v-if="status==400||status==401||status==500||status==501"
-            >
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <strong>Failed</strong>
-            </div>
-          </div>
         </fieldset>
       </form>
     </div>
@@ -84,7 +88,8 @@ export default {
       bill: [],
       createdOn: Date.now(),
       splitUnequally: false,
-      unequal_amount: []
+      unequal_amount: [],
+      unequal_error: false
     };
   },
   computed: {
@@ -112,19 +117,44 @@ export default {
   },
   methods: {
     onUnequalSubmit() {
-      console.log("WTF");
-      const len = this.friend_email.length;
-      console.log(this.unequal_amount.reduce((a, b) => a + b, 0));
-      var amount = this.unequal_amount;
-      var arr = [];
-      this.friend_email.map(x, index => {
-        const d = {
-          user_id: x,
-          amount_paid: amount[index]
+      var main_amount = parseInt(this.amount);
+      var u_amt = this.unequal_amount;
+      function arr() {
+        var sum = 0;
+        u_amt.forEach(element => {
+          sum += parseInt(element);
+        });
+        return sum;
+      }
+      const total = arr();
+      console.log(total);
+
+      console.log(main_amount);
+      if (total === main_amount) {
+        var arr = [];
+        this.friend_email.map(function(key, index) {
+          const d = {
+            user_id: key,
+            amount_paid: u_amt[index]
+          };
+          arr.push(d);
+        });
+
+        this.bill = arr;
+
+        const splitData = {
+          created_by: this.userData,
+          description: this.name,
+          bill_amount: this.amount,
+
+          bill_involvement: this.bill
         };
-        this.bill.push(d);
-      });
-      console.log(this.bill);
+        console.log(splitData);
+        this.$store.dispatch("splitExpense", splitData);
+      } else {
+        this.unequal_error = true;
+        console.log("wrong amount");
+      }
     },
     onSubmit() {
       this.splitEqually();
