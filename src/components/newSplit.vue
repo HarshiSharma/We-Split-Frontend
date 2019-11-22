@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div @load="wtf()">
     <div class="newExpense align-content-center justify-content-center m-5 m-sm-2">
-      <form @submit.prevent="onSubmit" class="form-horizontal">
+      <form v-on:submit.prevent="onSubmit,onUnequalSubmit" class="form-horizontal">
         <fieldset>
           <h1>Add Split</h1>
 
@@ -34,8 +34,39 @@
               placeholder="Enter Amount"
             />
           </div>
-          <button type="submit" class="btn draw-border" @click="splitEqually">Split Equally</button>
-          <button type="submit" class="btn draw-border">Split Unequally</button>
+          <div class="splitUnequal" v-if="splitUnequally">
+            <div class="form-group" v-for="(friend,index) in friend_email">
+              <label>{{friend}}</label>
+              <input
+                type="number"
+                class="form-control"
+                required="required"
+                v-model="unequal_amount[index]"
+                placeholder="Enter Amount"
+              />
+            </div>
+            <button @click="onUnequalSubmit()" class="btn draw-border m-1">Split Bill</button>
+            <button @click="splitUnequally=false" class="btn draw-border m-1">Back</button>
+          </div>
+          <button @click="onSubmit" class="btn draw-border" v-if="!splitUnequally">Split Equally</button>
+          <button
+            @click="splitUnequal()"
+            class="btn draw-border"
+            v-if="!splitUnequally"
+          >Split Unequally</button>
+          <div class="alerts">
+            <div class="alert alert-dismissible alert-success" v-if="status==200">
+              <button type="button" class="close" data-dismiss="alert" @click="status=0">&times;</button>
+              <strong>Expense Added</strong>
+            </div>
+            <div
+              class="alert alert-dismissible alert-danger"
+              v-if="status==400||status==401||status==500||status==501"
+            >
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>Failed</strong>
+            </div>
+          </div>
         </fieldset>
       </form>
     </div>
@@ -43,6 +74,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
   data() {
     return {
@@ -50,24 +82,28 @@ export default {
       amount: null,
       friend_email: [],
       bill: [],
-      createdOn: Date.now()
+      createdOn: Date.now(),
+      splitUnequally: false,
+      unequal_amount: []
     };
   },
   computed: {
-    data() {
+    userData() {
       //console.log(this.$store.getters.user);
-      if (!this.$store.getters.user) {
+      if (!this.$store.getters.userEmail) {
         return false;
       }
-      console.log($store.getters.user);
-      return this.$store.getters.user;
+      return this.$store.getters.userEmail;
     },
     friends() {
-      console.log(this.$store.getters.friends);
+      //console.log(this.$store.getters.friends);
       if (!this.$store.getters.friends) {
         return false;
       }
       return this.$store.getters.friends;
+    },
+    status() {
+      return this.$store.getters.splitStatus;
     }
   },
   created() {
@@ -75,24 +111,51 @@ export default {
     this.$store.dispatch("fetchFriends");
   },
   methods: {
+    onUnequalSubmit() {
+      console.log("WTF");
+      const len = this.friend_email.length;
+      console.log(this.unequal_amount.reduce((a, b) => a + b, 0));
+      var amount = this.unequal_amount;
+      var arr = [];
+      this.friend_email.map(x, index => {
+        const d = {
+          user_id: x,
+          amount_paid: amount[index]
+        };
+        this.bill.push(d);
+      });
+      console.log(this.bill);
+    },
     onSubmit() {
+      this.splitEqually();
       const splitData = {
-        name: this.name,
-        amount: this.amount,
-        friends: this.friend_email,
-        bill_involvement: this.bill,
-        createdOn: this.createdOn
+        created_by: this.userData,
+        description: this.name,
+        bill_amount: this.amount,
+
+        bill_involvement: this.bill
       };
-      console.log(splitData);
+      //console.log(splitData);
+      this.$store.dispatch("splitExpense", splitData);
     },
     splitEqually() {
+      this.friend_email.push(this.userData);
+
       const len = this.friend_email.length;
       const amt = this.amount / len;
       var arr = [];
-      this.friend_email.forEach(x => {
-        this.bill.push({ friend: x, amount: amt });
+      this.friend_email.map(x => {
+        const d = {
+          user_id: x,
+          amount_paid: amt
+        };
+        this.bill.push(d);
       });
       console.log(this.bill);
+    },
+    splitUnequal() {
+      this.friend_email.push(this.userData);
+      this.splitUnequally = !this.splitUnequally;
     }
   }
 };

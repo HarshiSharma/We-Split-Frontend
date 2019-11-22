@@ -11,8 +11,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         idToken: null,
-        userEmail: null,
-        user: [],
+        splitStatus: null,
         friendStatus: "",
         friends: [],
         friendData: []
@@ -20,10 +19,12 @@ export default new Vuex.Store({
     mutations: {
         authUser(state, userData) {
             state.idToken = userData.token;
+            state.userEmail = userData.email;
             // state.userId = userData.userId;
         },
-        storeUser(state, user) {
-            state.user = user
+        storeUserEmail(state, user) {
+            state.userEmail = user
+
         },
         clearAuthData(state) {
             state.idToken = null,
@@ -38,123 +39,6 @@ export default new Vuex.Store({
 
     },
     actions: {
-        setLogoutTimer({ commit }, expirationTime) {
-            const now = new Date()
-            now.setDate(now.getDate() + 1);
-            setTimeout(() => {
-                commit('clearAuthData')
-            }, now)
-        },
-        signup({ commit, dispatch }, authData) {
-            axios
-                .post("/register", {
-                    name: authData.name,
-                    email: authData.email,
-                    password: authData.password,
-
-                })
-                .then(res => {
-
-                    commit('authUser', {
-                        token: res.data.idToken,
-                        userId: res.data.localId
-                    })
-                    const now = new Date()
-                    const expirationDate = now.setDate(now.getDate() + 1);
-
-                    localStorage.setItem('token', res.data.idToken)
-                        //localStorage.setItem('userId', res.data.localId)
-                    localStorage.setItem('expirationDate', expirationDate)
-                    dispatch('storeUser', authData)
-                    dispatch('setLogoutTimer', now)
-                    router.replace('/')
-                })
-                .catch(error => console.log(error));
-        },
-        tryAutoLogin({ commit, dispatch }) {
-            const token = localStorage.getItem('token')
-            const expirationDate = localStorage.getItem('expirationDate')
-            const now = new Date()
-            if (!token || now >= expirationDate) {
-                return
-            } else {
-                //const userId = localStorage.getItem('userId')
-                commit('authUser', {
-                    token: token,
-                    //userId: userId
-                })
-
-            }
-
-        },
-        login({ commit, dispatch }, authData) {
-            axios
-                .post(
-                    "/authenticate", {
-                        email: authData.email,
-                        password: authData.password
-                    }
-                )
-                .then(res => {
-                    //console.log(res)
-                    commit('authUser', {
-                        token: res.data.token,
-
-                    })
-                    const now = new Date()
-                    const expirationDate = now.setDate(now.getDate() + 1);
-
-
-                    localStorage.setItem('token', res.data.token)
-                        //localStorage.setItem('userId', res.data.localId)
-                    localStorage.setItem('expirationDate', expirationDate)
-                    $bus.$emit('logged', 'User logged')
-
-                    router.replace('/dashboard')
-                    dispatch('setLogoutTimer', now)
-
-                })
-                .catch(error => console.log(error));
-        },
-        // storeUser({ commit, state }, userData) {
-        //     if (!this.state.idToken) {
-        //         return
-        //     }
-        //     globalAxios.post('/' + '?auth=' + state.idToken, userData)
-        //         .then(res => {
-        //             console.log(res);
-        //             console.log('What')
-        //         })
-        //         .catch(error => console.log(error))
-        // },
-        fetchUser({ commit, state }) {
-            if (!this.state.idToken) {
-                return
-            }
-
-            //const AuthStr = 'Bearer '.concat(this.state.idToken);
-
-            const AuthStr_token = 'Bearer '.concat(localStorage.getItem('token'));
-
-            const AuthStr = { headers: { Authorization: AuthStr_token } }
-            axios.get('/user', AuthStr)
-                .then(res => {
-                    //console.log("created: response", res);
-                    // const data = res.data;
-                    // const users_token = data.token;
-                    state.user.push(res.data)
-                        // console.log("created: users", users_token);
-
-                })
-                .catch(err => console.log("created error", err));
-        },
-        logout({ commit }) {
-            commit('clearAuthData')
-            localStorage.removeItem('expirationDate')
-            localStorage.removeItem('token')
-                //localStorage.removeItem('userId')
-            router.replace('/signin')
-        },
         addFriend({ commit, dispatch }, authData) {
             console.log(authData)
             const data = { "friend_email": authData }
@@ -171,6 +55,43 @@ export default new Vuex.Store({
                 )
                 .catch(err => console.log("created error", err));
         },
+        deleteFriend({ state, dispatch }, authData) {
+            console.log(authData)
+            const data = { "friend_email": authData }
+            const AuthStr_token = 'Bearer '.concat(localStorage.getItem('token'));
+            const AuthStr = { headers: { Authorization: AuthStr_token } }
+            console.log(data)
+            console.log(AuthStr)
+            axios.post('/deletefriend', data, AuthStr)
+                .then(
+                    res => {
+                        console.log(res.data.response);
+                    }
+                )
+                .catch(err => console.log("created error", err));
+        },
+        fetchUser({ commit, state }) {
+            if (!this.state.idToken) {
+                return
+            }
+
+            //const AuthStr = 'Bearer '.concat(this.state.idToken);
+
+            const AuthStr_token = 'Bearer '.concat(localStorage.getItem('token'));
+
+            const AuthStr = { headers: { Authorization: AuthStr_token } }
+            axios.get('/user', AuthStr)
+                .then(res => {
+                    //console.log("created: response", res);
+                    //const data = res.data;
+                    // const users_token = data.token;
+                    // console.log("created: users", users_token);
+
+                })
+                .catch(err => console.log("created error", err));
+        },
+
+
         fetchFriends({ commit, state }) {
             if (!this.state.idToken) {
                 return
@@ -182,10 +103,10 @@ export default new Vuex.Store({
                 }
             }
 
-            console.log(AuthStr)
+            //console.log(AuthStr)
             axios.get('/viewallfriends', AuthStr)
                 .then(res => {
-                    console.log(res.data);
+                    //console.log(res.data);
                     state.friends.push(res.data)
                         // console.log("created: users", users_token);
                 })
@@ -214,28 +135,127 @@ export default new Vuex.Store({
                 })
                 .catch(err => console.log("created error", err));
         },
-        deleteFriend({ state, dispatch }, authData) {
+        login({ commit, dispatch }, authData) {
+            axios
+                .post(
+                    "/authenticate", {
+                        email: authData.email,
+                        password: authData.password
+                    }
+                )
+                .then(res => {
+                    console.log(res)
+
+                    const data = {
+                        token: res.data.token,
+
+                    }
+                    console.log(data)
+                    commit('authUser', data)
+                        //console.log(this.state.userEmail)
+                    const now = new Date()
+                    const expirationDate = now.setDate(now.getDate() + 1);
+                    localStorage.setItem('userEmail', authData.email)
+
+
+                    localStorage.setItem('token', res.data.token)
+                        //localStorage.setItem('userId', res.data.localId)
+                    localStorage.setItem('expirationDate', expirationDate)
+
+                    $bus.$emit('logged', 'User logged')
+
+                    router.replace('/dashboard')
+                    dispatch('setLogoutTimer', now)
+
+                })
+                .catch(error => console.log(error));
+        },
+        logout({ commit }) {
+            commit('clearAuthData')
+            localStorage.removeItem('expirationDate')
+            localStorage.removeItem('token')
+            localStorage.removeItem('userEmail')
+            router.replace('/signin')
+            $bus.$emit(' ', 'User logged off')
+        },
+
+        setLogoutTimer({ commit }, expirationTime) {
+            const now = new Date()
+            now.setDate(now.getDate() + 1);
+            setTimeout(() => {
+                commit('clearAuthData')
+            }, now)
+        },
+        signup({ commit, dispatch }, authData) {
+            axios
+                .post("/register", {
+                    name: authData.name,
+                    email: authData.email,
+                    password: authData.password,
+
+                })
+                .then(res => {
+
+                    commit('authUser', {
+                        token: res.data.idToken,
+
+                    })
+
+                    const now = new Date()
+                    const expirationDate = now.setDate(now.getDate() + 1);
+
+                    localStorage.setItem('token', res.data.idToken)
+                        //localStorage.setItem('userId', res.data.localId)
+                    localStorage.setItem('expirationDate', expirationDate)
+                        //dispatch('storeUser', authData)
+                    dispatch('setLogoutTimer', now)
+                    router.replace('/')
+                })
+                .catch(error => console.log(error));
+        },
+        splitExpense({ commit, dispatch }, authData) {
             console.log(authData)
-            const data = { "friend_email": authData }
+            const data = authData
             const AuthStr_token = 'Bearer '.concat(localStorage.getItem('token'));
             const AuthStr = { headers: { Authorization: AuthStr_token } }
             console.log(data)
             console.log(AuthStr)
-            axios.post('/deletefriend', data, AuthStr)
+            axios.post('/addbill', data, AuthStr)
                 .then(
                     res => {
-                        console.log(res.data.response);
+                        console.log(res.status);
+                        this.state.splitStatus = res.status;
+
                     }
                 )
                 .catch(err => console.log("created error", err));
         },
+        tryAutoLogin({ commit, dispatch }) {
+            const token = localStorage.getItem('token')
+            const expirationDate = localStorage.getItem('expirationDate')
+            const now = new Date()
+            if (!token || now >= expirationDate) {
+                return
+            } else {
+                //const userId = localStorage.getItem('userId')
+                commit('authUser', {
+                    token: token,
+                    //userId: userId
+                })
+
+            }
+
+        },
+
+
+
     },
     getters: {
-        user(state) {
-
-            return state.user[0]
+        userEmail(state) {
+            return localStorage.getItem('userEmail')
         },
         isAuthenticated(state) {
+
             return state.idToken !== null
         },
         friendStat(state) {
@@ -247,6 +267,9 @@ export default new Vuex.Store({
         friendData(state) {
             console.log(state.friendData)
             return state.friendData[0]
+        },
+        splitStatus(state) {
+            return state.splitStatus;
         }
     }
 })

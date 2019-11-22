@@ -1,5 +1,5 @@
 <template>
-  <div id="dashboard">
+  <div id="dashboard" @load="fetchUser()">
     <!-- <h1>Welcome {{data.name}}!!</h1> -->
     <!-- <p>You should only get here if you're authenticated!</p>
     <p v-if="data">Your email address: {{ data.email }}</p>
@@ -55,15 +55,14 @@ export default {
     };
   },
   computed: {
-    data() {
+    userEmail() {
       //console.log(this.$store.getters.user);
-      if (!this.$store.getters.user) {
+      if (!this.$store.getters.userEmail) {
         return false;
       }
-      return this.$store.getters.user;
+      return this.$store.getters.userEmail;
     },
     friends() {
-      console.log(this.$store.getters.friends);
       if (!this.$store.getters.friends) {
         return false;
       }
@@ -74,9 +73,13 @@ export default {
     this.$store.dispatch("fetchUser");
     this.$store.dispatch("fetchFriends");
   },
+
   methods: {
     showprofile() {
       this.$store.dispatch("friendProfile", this.email);
+    },
+    fetchUser() {
+      this.$store.dispatch("fetchUser");
     }
   }
 };

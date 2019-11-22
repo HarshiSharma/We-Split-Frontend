@@ -7,6 +7,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import Header from "./Layout/header";
 import nav from "./Layout/newNav";
 //import Vue from "vue";

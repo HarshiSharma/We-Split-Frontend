@@ -6,7 +6,7 @@
     <b-nav-item>Activity</b-nav-item>
     <b-nav-item>Expense</b-nav-item>
   </b-nav>-->
-  <ol v-if="auth" class="breadcrumb">
+  <ol v-if="isLogged" class="breadcrumb">
     <li class="breadcrumb-item active">
       <a href="/dashboard">Friend</a>
     </li>
@@ -21,14 +21,19 @@
 </template>
 <script>
 export default {
-  computed: {
-    auth() {
-      return this.$store.getters.isAuthenticated;
-    }
+  data() {
+    return {
+    };
+  },
+  updated() {
+    this.$bus.$on("logged", () => {
+      this.isLogged = this.checkIfIsLogged();
+    });
   },
   methods: {
-    onLogout() {
-      this.$store.dispatch("logout");
+    checkIfIsLogged() {
+      if (!this.$store.getters.isAuthenticated) return false;
+      else return true;
     }
   }
 };
