@@ -1,4 +1,4 @@
-# test
+# We Split Frontend
 
 ## Project setup
 ```
